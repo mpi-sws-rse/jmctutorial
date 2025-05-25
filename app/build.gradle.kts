@@ -27,6 +27,7 @@ dependencies {
     agentDependencies("org.mpisws:jmc:0.1.0")
     agentDependencies("org.mpisws:jmc-agent:0.1.0")
 
+    implementation("org.mpisws:jmc:0.1.0")
     // JMC for model checking
     testImplementation("org.mpisws:jmc:0.1.0")
     // This dependency is used by the application.
