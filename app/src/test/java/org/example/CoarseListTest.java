@@ -6,7 +6,6 @@ import org.example.list.Set;
 import org.example.list.coarse.CoarseList;
 import org.mpisws.jmc.annotations.JmcCheck;
 import org.mpisws.jmc.annotations.JmcCheckConfiguration;
-import org.mpisws.jmc.util.concurrent.JmcThread;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +24,14 @@ public class CoarseListTest {
 
         Set set = new CoarseList();
 
-        List<JmcThread> insertionThreads = new ArrayList<>(NUM_INSERTIONS);
+        List<Thread> insertionThreads = new ArrayList<>(NUM_INSERTIONS);
         for (int i = 0; i < NUM_INSERTIONS; i++) {
             int item = arr[i];
             InsertionThread ithread = new InsertionThread(set, item);
             insertionThreads.add(ithread);
         }
 
-        List<JmcThread> deleteThreads = new ArrayList<>(NUM_DELETIONS);
+        List<Thread> deleteThreads = new ArrayList<>(NUM_DELETIONS);
         for (int i = 0; i < NUM_DELETIONS; i++) {
             int item = arr[i];
             DeletionThread dthread = new DeletionThread(set, item);
@@ -49,7 +48,7 @@ public class CoarseListTest {
 
         for (int i = 0; i < NUM_INSERTIONS; i++) {
             try {
-                insertionThreads.get(i).join1();
+                insertionThreads.get(i).join();
             } catch (InterruptedException e) {
 
             }
@@ -57,7 +56,7 @@ public class CoarseListTest {
 
         for (int i = 0; i < NUM_DELETIONS; i++) {
             try {
-                deleteThreads.get(i).join1();
+                deleteThreads.get(i).join();
             } catch (InterruptedException e) {
 
             }

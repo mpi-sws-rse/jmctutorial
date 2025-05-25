@@ -2,8 +2,8 @@ package org.example.list.coarse;
 
 import org.example.list.Set;
 import org.example.list.node.Node;
-import org.mpisws.jmc.runtime.RuntimeUtils;
-import org.mpisws.jmc.util.concurrent.JmcReentrantLock;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * CoarseList is a coarse-grained linked list implementation of the Set interface.
@@ -20,7 +20,7 @@ public class CoarseList implements Set {
     /**
      * Lock for synchronizing access to the list.
      */
-    private final JmcReentrantLock lock;
+    private final ReentrantLock lock;
 
 
     /**
@@ -28,32 +28,9 @@ public class CoarseList implements Set {
      * It creates a head node with Integer.MIN_VALUE and a tail node with Integer.MAX_VALUE.
      */
     public CoarseList() {
-        Node newNode1 = new Node(Integer.MIN_VALUE);
-        head = newNode1;
-        // Write event for initializing head node
-        RuntimeUtils.writeEvent(this, newNode1, "org/example/list/coarse/CoarseList",
-                "head", "Lorg/example/list/node/Node;");
-
-        Node headNode = head;
-        // Read event for accessing head node
-        RuntimeUtils.readEvent(this, "org/example/list/coarse/CoarseList",
-                "head", "Lorg/example/list/node/Node;");
-
-        Node newNode2 = new Node(Integer.MAX_VALUE);
-        headNode.next = newNode2;
-        // Write event for initializing next member of head node
-        RuntimeUtils.writeEvent(headNode, newNode2,
-                "org/example/list/node/Node",
-                "next",
-                "Lorg/example/list/node/Node;");
-
-        JmcReentrantLock lock = new JmcReentrantLock();
-        this.lock = lock;
-        // Write event for initializing lock
-        RuntimeUtils.writeEvent(this, lock,
-                "org/example/list/coarse/CoarseList",
-                "lock",
-                "Lorg/mpisws/jmc/util/concurrent/JmcReentrantLock;");
+        head = new Node(Integer.MIN_VALUE);
+        head.next = new Node(Integer.MAX_VALUE);
+        lock = new ReentrantLock();
     }
 
     /**
@@ -67,70 +44,21 @@ public class CoarseList implements Set {
     public boolean add(int i) {
         Node pred, curr;
         int key = i;
-        JmcReentrantLock l = lock;
-        // Read event to read the lock object
-        RuntimeUtils.readEvent(this, "org/example/list/coarse/CoarseList",
-                "lock", "Lorg/mpisws/jmc/util/concurrent/JmcReentrantLock;");
-
-        try {
-            l.lock();
-            Node h = head;
-            // Read event to read the head node
-            RuntimeUtils.readEvent(this, "org/example/list/coarse/CoarseList",
-                    "head", "Lorg/example/list/node/Node;");
-            pred = h;
-
+        synchronized (lock) {
+            pred = head;
             curr = pred.next;
-            // Read event to read the next member of the head node
-            RuntimeUtils.readEvent(pred, "org/example/list/node/Node",
-                    "next", "Lorg/example/list/node/Node;");
-
-            int currKey = curr.key;
-            // Read event to read the key of the current node
-            RuntimeUtils.readEvent(curr, "org/example/list/node/Node",
-                    "key", "I");
-
-            while (currKey < key) {
+            while (curr.key < key) {
                 pred = curr;
-                Node n = curr.next;
-                // Read event to read the next member of the current node
-                RuntimeUtils.readEvent(curr, "org/example/list/node/Node",
-                        "next", "Lorg/example/list/node/Node;");
-                curr = n;
-
-                currKey = curr.key;
-                // Read event to read the key of the current node
-                RuntimeUtils.readEvent(curr, "org/example/list/node/Node",
-                        "key", "I");
+                curr = curr.next;
             }
-
-            currKey = curr.key;
-            // Read event to read the key of the current node
-            RuntimeUtils.readEvent(curr, "org/example/list/node/Node",
-                    "key", "I");
-
-            if (key == currKey) {
+            if (key == curr.key) {
                 return false;
             } else {
                 Node node = new Node(i, key);
                 node.next = curr;
-                // Write event to write the next member of the new node
-                RuntimeUtils.writeEvent(node, curr,
-                        "org/example/list/node/Node",
-                        "next",
-                        "Lorg/example/list/node/Node;");
-
                 pred.next = node;
-                // Write event to write the next member of the predecessor node
-                RuntimeUtils.writeEvent(pred, node,
-                        "org/example/list/node/Node",
-                        "next",
-                        "Lorg/example/list/node/Node;");
-
                 return true;
             }
-        } finally {
-            l.unlock();
         }
     }
 
@@ -146,69 +74,19 @@ public class CoarseList implements Set {
     public boolean remove(int i) {
         Node pred, curr;
         int key = i;
-        JmcReentrantLock l = lock;
-
-        // Read event to read the lock object
-        RuntimeUtils.readEvent(this, "org/mpisws/jmc/programs/det/lists/list/coarse/CoarseList",
-                "lock", "Lorg/mpisws/jmc/util/concurrent/JmcReentrantLock;");
-        try {
-            l.lock();
+        synchronized (lock) {
             pred = head;
-
-            // Read event to read the head node
-            RuntimeUtils.readEvent(this, "org/mpisws/jmc/programs/det/lists/list/coarse/CoarseList",
-                    "head", "Lorg/mpisws/jmc/programs/det/lists/list/node/Node;");
-
             curr = pred.next;
-
-            // Read event to read the next member of the head node
-            RuntimeUtils.readEvent(pred, "org/mpisws/jmc/programs/det/lists/list/node/Node",
-                    "next", "Lorg/mpisws/jmc/programs/det/lists/list/node/Node;");
-
-            int currKey = curr.key;
-            // Read event to read the key of the current node
-            RuntimeUtils.readEvent(curr, "org/mpisws/jmc/programs/det/lists/list/node/Node",
-                    "key", "I");
-
-            while (currKey < key) {
+            while (curr.key < key) {
                 pred = curr;
-
-                Node n = curr.next;
-                // Read event to read the next member of the current node
-                RuntimeUtils.readEvent(curr, "org/mpisws/jmc/programs/det/lists/list/node/Node",
-                        "next", "Lorg/mpisws/jmc/programs/det/lists/list/node/Node;");
-
-                curr = n;
-
-                currKey = curr.key;
-                // Read event to read the key of the current node
-                RuntimeUtils.readEvent(curr, "org/mpisws/jmc/programs/det/lists/list/node/Node",
-                        "key", "I");
+                curr = curr.next;
             }
-            currKey = curr.key;
-            // Read event to read the key of the current node
-            RuntimeUtils.readEvent(curr, "org/mpisws/jmc/programs/det/lists/list/node/Node",
-                    "key", "I");
-
-            if (key == currKey) {
-                Node n = curr.next;
-
-                // Read event to read the next member of the current node
-                RuntimeUtils.readEvent(curr, "org/mpisws/jmc/programs/det/lists/list/node/Node",
-                        "next", "Lorg/mpisws/jmc/programs/det/lists/list/node/Node;");
-
-                pred.next = n;
-                // Write event to write the next member of the predecessor node
-                RuntimeUtils.writeEvent(pred, n,
-                        "org/mpisws/jmc/programs/det/lists/list/node/Node", "next",
-                        "Lorg/mpisws/jmc/programs/det/lists/list/node/Node;");
-
+            if (key == curr.key) {
+                pred.next = curr.next;
                 return true;
             } else {
                 return false;
             }
-        } finally {
-            l.unlock();
         }
     }
 

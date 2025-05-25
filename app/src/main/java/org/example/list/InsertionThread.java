@@ -1,12 +1,9 @@
 package org.example.list;
 
-import org.mpisws.jmc.runtime.RuntimeUtils;
-import org.mpisws.jmc.util.concurrent.JmcThread;
-
 /**
  * InsertionThread is a thread that inserts an item into a set.
  */
-public class InsertionThread extends JmcThread {
+public class InsertionThread extends Thread {
 
     /**
      * The set into which the item will be inserted.
@@ -26,14 +23,7 @@ public class InsertionThread extends JmcThread {
      */
     public InsertionThread(Set set, int item) {
         this.set = set;
-        // Write event for initializing set
-        RuntimeUtils.writeEvent(this, set, "org/mpisws/jmc/programs/det/lists/InsertionThread",
-                "set", "Lorg/mpisws/jmc/programs/det/lists/list/Set;");
-
         this.item = item;
-        // Write event for initializing item
-        RuntimeUtils.writeEvent(this, item,
-                "org/mpisws/jmc/programs/det/lists/InsertionThread", "item", "I");
     }
 
     /**
@@ -41,7 +31,7 @@ public class InsertionThread extends JmcThread {
      * It tries to insert the item into the set.
      */
     @Override
-    public void run1() {
+    public void run() {
         set.add(item);
     }
 }
