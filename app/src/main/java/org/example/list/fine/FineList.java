@@ -1,8 +1,16 @@
 package org.example.list.fine;
 
 import org.example.list.Set;
+import org.example.list.node.FNode;
 
 public class FineList implements Set {
+
+    private final FNode head;
+
+    public FineList() {
+        head = new FNode(Integer.MIN_VALUE);
+        head.next = new FNode(Integer.MAX_VALUE);
+    }
 
     /**
      * Adds an element to the set.
@@ -11,7 +19,33 @@ public class FineList implements Set {
      */
     @Override
     public boolean add(int i) {
-        return false;
+        int key = i;
+        head.lock();
+        FNode pred = head;
+        try {
+            FNode curr = pred.next;
+            curr.lock();
+            try {
+                while (curr.key < key) {
+                    pred.unlock();
+                    pred = curr;
+                    curr = curr.next;
+                    curr.lock();
+                }
+                if (key == curr.key) {
+                    return false;
+                } else {
+                    FNode node = new FNode(i, key);
+                    node.next = curr;
+                    pred.next = node;
+                    return true;
+                }
+            } finally {
+                curr.unlock();
+            }
+        } finally {
+            pred.unlock();
+        }
     }
 
     /**
@@ -22,7 +56,31 @@ public class FineList implements Set {
      */
     @Override
     public boolean remove(int i) {
-        return false;
+        int key = i;
+        head.lock();
+        FNode pred = head;
+        try {
+            FNode curr = pred.next;
+            curr.lock();
+            try {
+                while (curr.key < key) {
+                    pred.unlock();
+                    pred = curr;
+                    curr = curr.next;
+                    curr.lock();
+                }
+                if (key == curr.key) {
+                    pred.next = curr.next;
+                    return true;
+                } else {
+                    return false;
+                }
+            } finally {
+                curr.unlock();
+            }
+        } finally {
+            pred.unlock();
+        }
     }
 
     /**
@@ -33,6 +91,25 @@ public class FineList implements Set {
      */
     @Override
     public boolean contains(int i) {
-        return false;
+        int key = i;
+        head.lock();
+        FNode pred = head;
+        try {
+            FNode curr = pred.next;
+            curr.lock();
+            try {
+                while (curr.key < key) {
+                    pred.unlock();
+                    pred = curr;
+                    curr = curr.next;
+                    curr.lock();
+                }
+                return key == curr.key;
+            } finally {
+                curr.unlock();
+            }
+        } finally {
+            pred.unlock();
+        }
     }
 }
