@@ -44,7 +44,8 @@ public class CoarseList implements Set {
     public boolean add(int i) {
         Node pred, curr;
         int key = i;
-        synchronized (lock) {
+        try {
+            lock.lock();
             pred = head;
             curr = pred.next;
             while (curr.key < key) {
@@ -59,6 +60,9 @@ public class CoarseList implements Set {
                 pred.next = node;
                 return true;
             }
+        } finally {
+            // Ensure that the lock is always released, even if an exception occurs
+            lock.unlock();
         }
     }
 
@@ -74,7 +78,8 @@ public class CoarseList implements Set {
     public boolean remove(int i) {
         Node pred, curr;
         int key = i;
-        synchronized (lock) {
+        try {
+            lock.lock();
             pred = head;
             curr = pred.next;
             while (curr.key < key) {
@@ -87,6 +92,9 @@ public class CoarseList implements Set {
             } else {
                 return false;
             }
+        } finally {
+            // Ensure that the lock is always released, even if an exception occurs
+            lock.unlock();
         }
     }
 
@@ -100,13 +108,17 @@ public class CoarseList implements Set {
     public boolean contains(int i) {
         Node pred, curr;
         int key = i;
-        synchronized (lock) {
+        try {
+            lock.lock();
             pred = head;
             curr = pred.next;
             while (curr.key < key) {
                 curr = curr.next;
             }
             return key == curr.key;
+        } finally {
+            // Ensure that the lock is always released, even if an exception occurs
+            lock.unlock();
         }
     }
 }

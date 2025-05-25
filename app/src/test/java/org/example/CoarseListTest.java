@@ -24,31 +24,31 @@ public class CoarseListTest {
 
         Set set = new CoarseList();
 
-        List<Thread> insertionThreads = new ArrayList<>(NUM_INSERTIONS);
+        InsertionThread[] insertionThreads = new InsertionThread[NUM_INSERTIONS];
         for (int i = 0; i < NUM_INSERTIONS; i++) {
             int item = arr[i];
             InsertionThread ithread = new InsertionThread(set, item);
-            insertionThreads.add(ithread);
+            insertionThreads[i] = ithread;
         }
 
-        List<Thread> deleteThreads = new ArrayList<>(NUM_DELETIONS);
+        DeletionThread[] deleteThreads = new DeletionThread[NUM_DELETIONS];
         for (int i = 0; i < NUM_DELETIONS; i++) {
             int item = arr[i];
             DeletionThread dthread = new DeletionThread(set, item);
-            deleteThreads.add(dthread);
+            deleteThreads[i] = dthread;
         }
 
         for (int i = 0; i < NUM_INSERTIONS; i++) {
-            insertionThreads.get(i).start();
+            insertionThreads[i].start();
         }
 
         for (int i = 0; i < NUM_DELETIONS; i++) {
-            deleteThreads.get(i).start();
+            deleteThreads[i].start();
         }
 
         for (int i = 0; i < NUM_INSERTIONS; i++) {
             try {
-                insertionThreads.get(i).join();
+                insertionThreads[i].join();
             } catch (InterruptedException e) {
 
             }
@@ -56,7 +56,7 @@ public class CoarseListTest {
 
         for (int i = 0; i < NUM_DELETIONS; i++) {
             try {
-                deleteThreads.get(i).join();
+                deleteThreads[i].join();
             } catch (InterruptedException e) {
 
             }

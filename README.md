@@ -15,6 +15,7 @@ In a different directory, clone the JMC repository:
 git clone https://github.com/mpi-sws-rse/jmc.git
 cd jmc
 ./gradlew clean
+./gradlew :agent:publish
 ./gradlew :core:publish
 ```
 
@@ -29,5 +30,5 @@ To run the example, follow these steps:
 
 ```bash
 ./gradlew clean
-./gradlew --info test
+./gradlew --info test --tests "org.example.CounterTest.runTrustCounterTest"
 ```
