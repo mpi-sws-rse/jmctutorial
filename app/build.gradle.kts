@@ -16,16 +16,30 @@ repositories {
     mavenCentral()
 }
 
+val agentDependencies by configurations.creating
+
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    agentDependencies("org.mpisws:jmc:0.1.0")
+    agentDependencies("org.mpisws:jmc-agent:0.1.0")
+
     // JMC for model checking
-    implementation("org.mpisws:jmc:0.1.0")
+    testImplementation("org.mpisws:jmc:0.1.0")
     // This dependency is used by the application.
     implementation(libs.guava)
+}
+
+tasks.register<Copy>("copyJar") {
+    from(agentDependencies.filter { it.name.contains("jmc-0.1.0") })
+    into("src/main/resources/lib")
+}
+
+tasks.processResources {
+    dependsOn("copyJar")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -43,4 +57,8 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    val agentJar = agentDependencies.find { it.name.contains("jmc-agent-0.1.0") }?.absolutePath
+
+    val agentArg = "-javaagent:$agentJar=debug,instrumentingPackages=org.mpisws.jmc.test"
+    jvmArgs(agentArg)
 }
