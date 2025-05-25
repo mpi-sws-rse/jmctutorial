@@ -4,14 +4,15 @@ package org.example;
 
 import org.mpisws.jmc.annotations.JmcCheck;
 import org.mpisws.jmc.annotations.JmcCheckConfiguration;
-import org.mpisws.jmc.util.concurrent.JmcReentrantLock;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 public class CounterTest {
 
     // A program where two threads increment a shared counter.
     private void testTwoCounterIncrement() {
         Counter counter = new Counter();
-        JmcReentrantLock lock = new JmcReentrantLock();
+        ReentrantLock lock = new ReentrantLock();
 
         CounterThread thread1 = new CounterThread(counter, lock);
         CounterThread thread2 = new CounterThread(counter, lock);
@@ -20,8 +21,8 @@ public class CounterTest {
         thread2.start();
 
         try {
-            thread1.join1();
-            thread2.join1();
+            thread1.join();
+            thread2.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -38,7 +39,7 @@ public class CounterTest {
     }
 
     @JmcCheck
-    @JmcCheckConfiguration(strategy = "trust", numIterations = 100)
+    @JmcCheckConfiguration(strategy = "trust", numIterations = 100, debug=true)
     public void runTrustCounterTest() {
         testTwoCounterIncrement();
     }

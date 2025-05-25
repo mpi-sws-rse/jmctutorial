@@ -7,3 +7,14 @@
 
 # Ignore Gradle build output directory
 build
+
+# Python stuff
+__pycache__
+# Ignore Python bytecode files
+*.pyc
+# Ignore Python virtual environment directories
+venv/
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints
+# Ignore Jupyter Notebook metadata
+.ipynb

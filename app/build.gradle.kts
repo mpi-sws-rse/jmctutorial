@@ -59,6 +59,6 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
     val agentJar = agentDependencies.find { it.name.contains("jmc-agent-0.1.0") }?.absolutePath
 
-    val agentArg = "-javaagent:$agentJar=debug,instrumentingPackages=org.mpisws.jmc.test"
+    val agentArg = "-javaagent:$agentJar=debug,instrumentingPackages=org.example"
     jvmArgs(agentArg)
 }
