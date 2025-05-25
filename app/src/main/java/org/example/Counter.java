@@ -2,6 +2,8 @@ package org.example;
 
 import org.mpisws.jmc.runtime.RuntimeUtils;
 
+// A simple counter class that maintains an integer count.
+// It provides methods to get and set the count, with JMC event logging for tracking changes.
 public class Counter {
     private int count = 0;
 
