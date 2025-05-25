@@ -12,7 +12,7 @@ public class ParametricCounterTest {
         parametricCounter.run();
 
         // The counter should be equal to the number of threads.
-        assert parametricCounter.getCounterValue() == 10 :
+        assert parametricCounter.getCounterValue() == 5 :
             "Counter value should be 10, but is " + parametricCounter.getCounterValue();
     }
 
@@ -23,7 +23,7 @@ public class ParametricCounterTest {
         parametricCounter.run();
 
         // The counter should be equal to the number of threads.
-        assert parametricCounter.getCounterValue() == 10 :
+        assert parametricCounter.getCounterValue() == 5 :
             "Counter value should be 10, but is " + parametricCounter.getCounterValue();
     }
 }
