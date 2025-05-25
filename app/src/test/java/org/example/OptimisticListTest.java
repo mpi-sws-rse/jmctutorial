@@ -65,7 +65,7 @@ public class OptimisticListTest {
 
     // Running with JMC using the default configuration.
     @JmcCheck
-    @JmcCheckConfiguration(numIterations = 100)
+    @JmcCheckConfiguration(numIterations = 120)
     public void runRandomFineListTest() {
         test_50_50_workload_optimistic_list(6);
     }
