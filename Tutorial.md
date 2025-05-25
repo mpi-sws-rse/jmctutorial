@@ -14,4 +14,4 @@ Then run the test program with different values of `n` to see how the counter be
 Write a test program that uses the JMC API to check the correctness of the concurrent counter implementation.
 You can use the `CounterThread` class from the previous task to create a test that checks if the counter is incremented correctly by multiple threads.
 
-[Solution](app/src/main/java/org/example/ParametricCounterTest.java)
+[Solution](app/src/test/java/org/example/ParametricCounterTest.java)
