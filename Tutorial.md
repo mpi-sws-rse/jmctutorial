@@ -1,5 +1,20 @@
 # Tutorial tasks
 
+## Disclaimers and guidelines
+
+- Currently, ReentrantLock is the only synchronization primitive supported by the JMC API. Do not use other synchronization primitives like `synchronized`.
+- When a class should not be instrumented to test, annotate it with `@JmcIgnoreInstrumentation` flag.
+- Each test can be parameterized with a debug flag, `debug=true` and when set, the executions graphs (if running with trust strategy) will be stored in `build/test-results/jmc-report`. The graphs can be visualized using the following command:
+
+```bash
+./visuazlie_graphs.sh
+````
+- Running tests on the command line can be done with the following command:
+
+```bash
+./gradlew :app:test --tests "org.example.<className>.<methodName>"
+```
+
 ## 1. Writing a parametric Concurrent counter
 
 Write a simple test program that accepts a number of threads `n` and instantiates
@@ -16,15 +31,46 @@ You can use the `CounterThread` class from the previous task to create a test th
 
 [Solution](app/src/test/java/org/example/ParametricCounterTest.java)
 
-## 3. Running Tests
+## 3. Writing test harness for Coarse and Fine Grained Counter Tests
 
-Run the test you wrote for the Concurrent counter.
-To run any tests, you can use the following command:
+Write a test Harness that uses the [CoarseList](app/src/main/java/org/example/list/coarse/CoarseList.java) and [FineList](app/src/main/java/org/example/list/fine/FineList.java) classes to test the correctness of the concurrent list implementations.
+The test should accept a parameter `n`. Subsequently, it should create `n/2` [InsertionThreads](app/src/main/java/org/example/list/InsertionThread.java) and `n/2` [DeletionThread](app/src/main/java/org/example/list/DeletionThread.java) threads, start them, and wait for them to finish.
+
+Finally, the test should check if the list is in a consistent state after all threads have finished.
+
+[Solution](app/src/test/java/org/example/CoarseListTest.java)
+
+
+## 4. Running a test with Random and measuring coverage of Execution Graphs
+
+The [MeasureCoverageTest](app/src/test/java/org/example/MeasureCoverageTest.java) defines a test that measures the coverage of execution graphs for the concurrent counter implementation.
+
+Run the test using the following command:
+
 ```bash
-./gradlew :app:test --tests "classPath.methodName"
+./gradlew :app:test --tests "org.example.MeasureCoverageTest" 
 ```
 
-For running the test you wrote in the previous task, use:
+## 5. Write a coverage test for Coarse List
+
+Define coverage tests for the CoarseList and run with Random to see the number of execution graphs covered.
+
+[Solution](app/src/test/java/org/example/CoarseListCoverageTest.java)
+
+## 6. Run the coverage test for Lazy List
+
+The [MeasureLazyListCoverageTest](app/src/test/java/org/example/MeasureLazyListCoverageTest.java) defines a test that measures the coverage of execution graphs for the lazy list implementation.
+
+Run the test using the following command:
+
 ```bash
-./gradlew :app:test --tests "org.example.ParametricCounterTest.runTrustParametricCounterTest"
+./gradlew --info :app:test --tests "org.example.MeasureLazyListCoverageTest" 
 ```
+
+Run with different values of `n` to see how the coverage changes with the number of threads.
+
+## 7. Write a custom strategy to test programs with.
+
+Write a custom strategy to test programs with. For example [WeightedRandomStrategy](app/src/main/java/org/example/strategies/WeightedRandomStrategy.java) defines a boilerplate for a custom strategy that can be used to test programs with a weighted random approach.
+
+Given a threshold `n`, the strategy will select from a given set of available tasks based on their weights (initially `n`) and decrement every time they observe an event for that task. When the weights of all tasks reach zero, the strategy will revert to a random selection of tasks.

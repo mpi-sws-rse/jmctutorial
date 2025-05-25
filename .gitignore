@@ -18,3 +18,6 @@ venv/
 .ipynb_checkpoints
 # Ignore Jupyter Notebook metadata
 .ipynb
+
+# Ignore the generated files
+app/src/main/resources/lib/*
