@@ -15,3 +15,16 @@ Write a test program that uses the JMC API to check the correctness of the concu
 You can use the `CounterThread` class from the previous task to create a test that checks if the counter is incremented correctly by multiple threads.
 
 [Solution](app/src/test/java/org/example/ParametricCounterTest.java)
+
+## 3. Running Tests
+
+Run the test you wrote for the Concurrent counter.
+To run any tests, you can use the following command:
+```bash
+./gradlew :app:test --tests "classPath.methodName"
+```
+
+For running the test you wrote in the previous task, use:
+```bash
+./gradlew :app:test --tests "org.example.ParametricCounterTest.runTrustParametricCounterTest"
+```
