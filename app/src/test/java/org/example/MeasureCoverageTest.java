@@ -1,9 +1,11 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
+import org.mpisws.jmc.annotations.JmcCheck;
 import org.mpisws.jmc.checker.JmcCheckerConfiguration;
 import org.mpisws.jmc.checker.JmcFunctionalTestTarget;
 import org.mpisws.jmc.checker.JmcModelChecker;
+import org.mpisws.jmc.checker.JmcTestTarget;
 import org.mpisws.jmc.checker.exceptions.JmcCheckerException;
 import org.mpisws.jmc.strategies.RandomSchedulingStrategy;
 import org.mpisws.jmc.strategies.trust.MeasureGraphCoverageStrategy;
@@ -24,7 +26,7 @@ public class MeasureCoverageTest {
                 .strategyConstructor((sconfig) -> {
                     return new MeasureGraphCoverageStrategy(
                             new RandomSchedulingStrategy(sconfig.getSeed()),
-                            new MeasureGraphCoverageStrategyConfig.MeasureGraphCoverageStrategyConfigBuilder()
+                            MeasureGraphCoverageStrategyConfig.builder()
                                     .recordPath(sconfig.getReportPath())
                                     .recordPerIteration()
                                     .build()
@@ -32,8 +34,8 @@ public class MeasureCoverageTest {
                 })
                 .build();
 
-        JmcFunctionalTestTarget target = new JmcFunctionalTestTarget(
-                "ParametricCounterTest",
+        JmcTestTarget target = new JmcFunctionalTestTarget(
+                "ParametricCounterTestWithCoverage",
                 () -> {
                     ParametricCounter parametricCounter = new ParametricCounter(5);
                     parametricCounter.run();

@@ -4,15 +4,18 @@ import org.example.list.DeletionThread;
 import org.example.list.InsertionThread;
 import org.example.list.Set;
 import org.example.list.coarse.CoarseList;
-import org.mpisws.jmc.annotations.JmcCheck;
-import org.mpisws.jmc.annotations.JmcCheckConfiguration;
+import org.junit.jupiter.api.Test;
+import org.mpisws.jmc.checker.JmcCheckerConfiguration;
+import org.mpisws.jmc.checker.JmcFunctionalTestTarget;
+import org.mpisws.jmc.checker.JmcModelChecker;
+import org.mpisws.jmc.checker.exceptions.JmcCheckerException;
+import org.mpisws.jmc.strategies.RandomSchedulingStrategy;
+import org.mpisws.jmc.strategies.trust.MeasureGraphCoverageStrategy;
+import org.mpisws.jmc.strategies.trust.MeasureGraphCoverageStrategyConfig;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CoarseListCoverageTest {
 
-// Testing the CoarseList implementation with JMC checks
-public class CoarseListTest {
-
+    // Same program as the CoarseListTest
     private void test_50_50_workload_coarse_list(int NUM_THREADS) {
 
         int NUM_INSERTIONS = (int) Math.ceil(NUM_THREADS / 2.0);
@@ -64,18 +67,29 @@ public class CoarseListTest {
         }
     }
 
-    // Running with JMC using the default configuration. (random
-    @JmcCheck
-    @JmcCheckConfiguration(numIterations = 100)
-    public void runRandomCoarseListTest() {
-        test_50_50_workload_coarse_list(6);
-    }
+    @Test
+    public void testCoarseListCoverage() throws JmcCheckerException {
+        JmcCheckerConfiguration config = new JmcCheckerConfiguration.Builder()
+                .numIterations(100)
+                .strategyConstructor((sConfig) -> {
+                    return new MeasureGraphCoverageStrategy(
+                            new RandomSchedulingStrategy(sConfig.getSeed()),
+                            MeasureGraphCoverageStrategyConfig.builder()
+                                    .recordPath(sConfig.getReportPath())
+                                    .recordPerIteration()
+                                    .build()
+                    );
+                })
+                .build();
 
-    // Running with JMC using the trust strategy.
-    @JmcCheck
-    @JmcCheckConfiguration(strategy = "trust", numIterations = 130)
-    public void runTrustCoarseListTest() {
-        test_50_50_workload_coarse_list(5);
+        JmcFunctionalTestTarget target = new JmcFunctionalTestTarget(
+                "CoarseListCoverage",
+                () -> {
+                    test_50_50_workload_coarse_list(5);
+                }
+        );
+
+        JmcModelChecker checker = new JmcModelChecker(config);
+        checker.check(target);
     }
 }
-
