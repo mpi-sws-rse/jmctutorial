@@ -9,7 +9,7 @@
 - Each test can be parameterized with a debug flag, `debug=true` and when set, the executions graphs (if running with trust strategy) will be stored in `build/test-results/jmc-report`. The graphs can be visualized using the following command:
 
 ```bash
-./visuazlie_graphs.sh
+./visualize_graphs.sh
 ````
 - Running tests on the command line can be done with the following command:
 
