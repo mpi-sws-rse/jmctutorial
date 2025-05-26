@@ -2,9 +2,7 @@
 
 ## Disclaimers and guidelines
 
-- Currently, ReentrantLock is the only synchronization primitive supported by the JMC API. Do not use other synchronization primitives like `synchronized`.
 - When writing threads, use the paradigm of extending the `Thread` class and overriding the `run()` method. Do not use `Runnable` or `Callable` interfaces.
-- When a class should not be instrumented to test, annotate it with `@JmcIgnoreInstrumentation` flag.
 - You can update the `numIterations` parameter in each test to control the number of iterations for the test.
 - Each test can be parameterized with a debug flag, `debug=true` and when set, the executions graphs (if running with trust strategy) will be stored in `build/test-results/jmc-report`. The graphs can be visualized using the following command:
 
