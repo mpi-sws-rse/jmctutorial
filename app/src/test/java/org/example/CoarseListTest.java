@@ -62,6 +62,9 @@ public class CoarseListTest {
 
             }
         }
+
+        // Check if the set contains the expected elements (trivially the first element)
+        assert !set.contains(0);
     }
 
     // Running with JMC using the default configuration. (random
